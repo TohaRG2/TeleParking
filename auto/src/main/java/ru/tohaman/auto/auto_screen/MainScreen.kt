@@ -13,13 +13,18 @@ import androidx.car.app.model.GridTemplate
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.DefaultLifecycleObserver
 import ru.tohaman.auto.OpenParkingIn
 import ru.tohaman.auto.OpenParkingOut
 import ru.tohaman.auto.OpenParkingTest
-import ru.tohaman.auto.R
-import ru.tohaman.auto.TAG
 import ru.tohaman.auto.volley.RestController
+import ru.tohaman.util.PreferencesConstants
+import ru.tohaman.auto.R
+import ru.tohaman.util.PreferencesConstants.TAG
 
 
 /**
@@ -31,7 +36,12 @@ class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleO
     private val mHandler = Handler(Looper.getMainLooper())
     private var isParkingInLoading: Boolean = false
     private var isParkingOutLoading: Boolean = false
+
     val restController = RestController(carContext)
+    val CarContext.dataStore: DataStore<Preferences> by preferencesDataStore(name = PreferencesConstants.USER_SETTINGS)
+    val dataSore = carContext.dataStore
+    val chatId = stringPreferencesKey(name = PreferencesConstants.CHAT_ID)
+
 
     init {
         lifecycle.addObserver(this)
@@ -43,9 +53,11 @@ class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleO
     override fun onGetTemplate(): Template {
         val listBuilder = ItemList.Builder()
         val parkingInIcon = CarIcon.Builder(IconCompat.createWithResource(getCarContext(),
-            R.drawable.ic_parking_in)).build()
+            R.drawable.ic_parking_in
+        )).build()
         val parkingOutIcon = CarIcon.Builder(IconCompat.createWithResource(getCarContext(),
-            R.drawable.ic_parking_out)).build()
+            R.drawable.ic_parking_out
+        )).build()
 
         val gridItem1 = GridItem.Builder()
             .setTitle("Parking In")
@@ -131,3 +143,4 @@ class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleO
     }
 
 }
+

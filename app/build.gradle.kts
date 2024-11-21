@@ -46,10 +46,11 @@ dependencies {
 
     implementation(project(":auto"))
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.app.automotive)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.7.5")
@@ -87,6 +88,9 @@ dependencies {
     //OkHTTP
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+
+    //Koin
+    implementation("io.insert-koin:koin-core:3.4.0")
 }
 java {
     toolchain {

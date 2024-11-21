@@ -15,8 +15,6 @@ class MainService : CarAppService() {
     }
 
     // В этом методе проверяем, можно ли доверять хосту, который привязывается к нашему сервису
-    // TODO подумать можно ли разрешить все хосты (для проверки на реальном устройстве, а не на эмуляторе)
-    // попробовать вернуть HostValidator.ALLOW_ALL_HOSTS_VALIDATOR
     override fun createHostValidator(): HostValidator {
 //        return HostValidator.Builder(applicationContext)
 //            .addAllowedHosts(R.array.hosts_allowlist_sample)

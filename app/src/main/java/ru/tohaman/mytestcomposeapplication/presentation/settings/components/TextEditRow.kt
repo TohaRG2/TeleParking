@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
+import ru.tohaman.util.PreferencesConstants.TAG
 
 
 @Composable
@@ -77,7 +77,6 @@ fun TextEditRowExample(){
         hint = "токен, полученный от BotFather",
         onValueChange = { inputText = it},
         onDone = {
-            //TODO тут можно сделать проверку введенного текста
             Log.d(TAG, "TextEditRow: ${inputText}")
             focusManager.clearFocus()
         }

@@ -1,14 +1,12 @@
 package ru.tohaman.auto.volley
 
 import android.content.Context
-import android.util.Log
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import ru.tohaman.auto.BotToken
 import ru.tohaman.auto.ChatId
-import ru.tohaman.auto.TAG
 
 class RestController(private val context: Context) {
     private val botToken = BotToken

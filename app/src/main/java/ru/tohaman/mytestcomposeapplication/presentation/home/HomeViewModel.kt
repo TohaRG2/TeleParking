@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import ru.tohaman.mytestcomposeapplication.domain.model.response.Response
 import ru.tohaman.mytestcomposeapplication.domain.usecases.home.HomeUseCases
 import ru.tohaman.mytestcomposeapplication.domain.usecases.settings.AppPreferences
-import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
+import ru.tohaman.util.PreferencesConstants.TAG
 import javax.inject.Inject
 
 @HiltViewModel
