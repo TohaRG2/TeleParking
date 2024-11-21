@@ -1,16 +1,21 @@
-package ru.tohaman.auto.volley
+package ru.tohaman.mytestcomposeapplication.android_auto.volley
 
 import android.content.Context
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import ru.tohaman.auto.BotToken
-import ru.tohaman.auto.ChatId
+import ru.tohaman.mytestcomposeapplication.android_auto.BotToken
+import ru.tohaman.mytestcomposeapplication.android_auto.ChatId
 
 class RestController(private val context: Context) {
-    private val botToken = BotToken
-    private val chatId = ChatId
+    private var botToken = ""
+    private var chatId = ""
+
+    fun setNewCredentials(botToken: String, chatId: String) {
+        this.botToken = botToken
+        this.chatId = chatId
+    }
 
     fun sendMessage(
         message: String = "testMessage",
@@ -31,7 +36,7 @@ class RestController(private val context: Context) {
         )
         request.setRetryPolicy(
             DefaultRetryPolicy(
-                10,
+                1,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
             )

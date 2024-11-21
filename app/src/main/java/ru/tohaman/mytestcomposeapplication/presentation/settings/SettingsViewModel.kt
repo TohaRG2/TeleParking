@@ -10,13 +10,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import ru.tohaman.mytestcomposeapplication.data.mapper.toSendingSettings
 import ru.tohaman.mytestcomposeapplication.data.mapper.toSettingsState
-import ru.tohaman.mytestcomposeapplication.domain.usecases.settings.AppPreferences
+import ru.tohaman.mytestcomposeapplication.domain.usecases.UseCases
 import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val preferences: AppPreferences
+    private val useCases: UseCases
 ): ViewModel() {
     private val _state = mutableStateOf(SettingsState())
     val state : State<SettingsState> = _state
@@ -26,7 +26,7 @@ class SettingsViewModel @Inject constructor(
     init {
         Log.d(TAG, "SettingsViewModel - Init:")
         viewModelScope.launch{
-            preferences.sendingSettingsPref().collect{ settings ->
+            useCases.preferencesManager().collect{ settings ->
                 _state.value = settings.toSettingsState()
                 Log.d(TAG, "SettingsViewModel - Init2: ${_state.value}")
             }
@@ -55,28 +55,28 @@ class SettingsViewModel @Inject constructor(
     fun changeBotTokenFocus(event: SettingsUiEvent.ChangeBotTokenFocus) {
         event.focusManager.clearFocus()
         viewModelScope.launch {
-            preferences.sendingSettingsPref.save(_state.value.toSendingSettings())
+            useCases.preferencesManager.save(_state.value.toSendingSettings())
         }
     }
 
     fun changeChatIdFocus(event: SettingsUiEvent.ChangeChatIdFocus) {
         event.focusManager.clearFocus()
         viewModelScope.launch {
-            preferences.sendingSettingsPref.save(_state.value.toSendingSettings())
+            useCases.preferencesManager.save(_state.value.toSendingSettings())
         }
     }
 
     fun changeParkingOutFocus(event: SettingsUiEvent.ChangeParkingOutFocus) {
         event.focusManager.clearFocus()
         viewModelScope.launch{
-            preferences.sendingSettingsPref.save(_state.value.toSendingSettings())
+            useCases.preferencesManager.save(_state.value.toSendingSettings())
         }
     }
 
     fun changeParkingInFocus(event: SettingsUiEvent.ChangeParkingInFocus) {
         event.focusManager.clearFocus()
         viewModelScope.launch {
-            preferences.sendingSettingsPref.save(_state.value.toSendingSettings())
+            useCases.preferencesManager.save(_state.value.toSendingSettings())
         }
     }
 

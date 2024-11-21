@@ -44,8 +44,6 @@ android {
 
 dependencies {
 
-    implementation(project(":auto"))
-
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.app.automotive)
@@ -62,6 +60,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    //Emoji
+    implementation ("androidx.emoji2:emoji2:1.5.0")
+
     // ViewModel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation ("androidx.activity:activity-compose:1.9.3")
@@ -71,7 +72,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.9.0")
 
     //Навигация
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.8.4")
 
     //DataStore (SharedPreferences)
     implementation("androidx.datastore:datastore-preferences:1.1.1")
@@ -89,8 +90,11 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    //Koin
-    implementation("io.insert-koin:koin-core:3.4.0")
+    //Koin(Delete)
+    implementation("io.insert-koin:koin-core:4.0.0")
+
+    //Volley
+    implementation("com.android.volley:volley:1.2.1")
 }
 java {
     toolchain {

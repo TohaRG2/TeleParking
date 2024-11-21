@@ -21,7 +21,7 @@
             android:value="1"
             tools:ignore="MetadataTagInsideApplicationTag" />
         <service
-            android:name="ru.tohaman.auto.auto_screen.MainService"
+            android:name="ru.tohaman.mytestcomposeapplication.android_auto.auto_screen.AutoService"
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />

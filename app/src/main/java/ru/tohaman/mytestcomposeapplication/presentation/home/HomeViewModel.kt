@@ -14,15 +14,13 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.tohaman.mytestcomposeapplication.domain.model.response.Response
-import ru.tohaman.mytestcomposeapplication.domain.usecases.home.HomeUseCases
-import ru.tohaman.mytestcomposeapplication.domain.usecases.settings.AppPreferences
-import ru.tohaman.util.PreferencesConstants.TAG
+import ru.tohaman.mytestcomposeapplication.domain.usecases.UseCases
+import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    preferences: AppPreferences,
-    private val homeUseCases: HomeUseCases,
+    private val useCases: UseCases,
 ) : ViewModel() {
     private var _state = mutableStateOf(HomeState())
     val state: State<HomeState> = _state
@@ -36,7 +34,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         Log.d(TAG, "Start HomeViewModel: ")
-        preferences.sendingSettingsPref().onEach { settings ->
+        useCases.preferencesManager().onEach { settings ->
             _state.value = _state.value.copy(
                 botToken = settings.botToken,
                 chatId = settings.chatId,
@@ -81,7 +79,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun sendMessage(message: String) {
         Log.i(TAG, "sendMessage: $message ")
         val encodedToken = _state.value.botToken.replace(":", "%3A")
-        val response = homeUseCases.sendTelegramMessages(
+        val response = useCases.sendTelegramMessages(
             botToken = encodedToken,
             chatId = _state.value.chatId,
             message = message

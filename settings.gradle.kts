@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "MyTestComposeApplication"
 include(":app")
-include(":auto")

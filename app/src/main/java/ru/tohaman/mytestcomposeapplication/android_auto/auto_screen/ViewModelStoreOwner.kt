@@ -1,4 +1,4 @@
-package ru.tohaman.auto.auto_screen
+package ru.tohaman.mytestcomposeapplication.android_auto.auto_screen
 
 import androidx.car.app.Screen
 import androidx.lifecycle.ViewModelStore
@@ -20,3 +20,4 @@ fun Screen.getViewModelStoreOwner(): ViewModelStoreOwner {
     }
     return viewModelStoreOwner
 }
+

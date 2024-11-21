@@ -1,4 +1,4 @@
-package ru.tohaman.auto.auto_screen
+package ru.tohaman.mytestcomposeapplication.android_auto.auto_screen
 
 import android.os.Handler
 import android.os.Looper
@@ -13,44 +13,52 @@ import androidx.car.app.model.GridTemplate
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.DefaultLifecycleObserver
-import ru.tohaman.auto.OpenParkingIn
-import ru.tohaman.auto.OpenParkingOut
-import ru.tohaman.auto.OpenParkingTest
-import ru.tohaman.auto.volley.RestController
-import ru.tohaman.util.PreferencesConstants
-import ru.tohaman.auto.R
-import ru.tohaman.util.PreferencesConstants.TAG
-
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import ru.tohaman.mytestcomposeapplication.R
+import ru.tohaman.mytestcomposeapplication.android_auto.OpenParkingIn
+import ru.tohaman.mytestcomposeapplication.android_auto.OpenParkingOut
+import ru.tohaman.mytestcomposeapplication.android_auto.OpenParkingTest
+import ru.tohaman.mytestcomposeapplication.android_auto.volley.RestController
+import ru.tohaman.mytestcomposeapplication.domain.usecases.UseCases
+import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
 
 /**
  * Объект [Screen] содержит шаблон и метаданные, которые мы хотим отображать на экране авто
  * Кроме этого, [Screen] имеет доступ к [ScreenManager], который можно использовать для
  * открытия других экранов
  */
-class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleObserver {
+class AutoScreen (
+    carContext: CarContext,
+    private val useCases: UseCases
+) : Screen(carContext), DefaultLifecycleObserver {
+
     private val mHandler = Handler(Looper.getMainLooper())
     private var isParkingInLoading: Boolean = false
     private var isParkingOutLoading: Boolean = false
-
     val restController = RestController(carContext)
-    val CarContext.dataStore: DataStore<Preferences> by preferencesDataStore(name = PreferencesConstants.USER_SETTINGS)
-    val dataSore = carContext.dataStore
-    val chatId = stringPreferencesKey(name = PreferencesConstants.CHAT_ID)
-
+    val viewModelStoreOwner = getViewModelStoreOwner()
+    var botToken: String = ""
+    var chatId: String = ""
 
     init {
         lifecycle.addObserver(this)
         isParkingInLoading = false
         isParkingOutLoading = false
+        useCases.preferencesManager().onEach { settings ->
+//                botToken = settings[stringPreferencesKey(name = PreferencesConstants.BOT_TOKEN)] ?: ""
+//                chatId = settings[stringPreferencesKey(name = PreferencesConstants.CHAT_ID)] ?: ""
+                botToken = settings.botToken
+                chatId = settings.chatId
+                Log.d(TAG, "Loaded: $botToken $chatId")
+        }.launchIn(lifecycleScope)
     }
 
     // Создаем и возвращаем шаблон
     override fun onGetTemplate(): Template {
+        Log.d(TAG, "onGetTemplate: start")
         val listBuilder = ItemList.Builder()
         val parkingInIcon = CarIcon.Builder(IconCompat.createWithResource(getCarContext(),
             R.drawable.ic_parking_in
@@ -94,7 +102,7 @@ class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleO
                         message = OpenParkingTest,
                         onSend = { response ->
                             Log.d(TAG, "onGetTemplate: $response")
-                            CarToast.makeText(carContext, "Дверь открыта", CarToast.LENGTH_SHORT).show()
+                            CarToast.makeText(carContext, "Дверь открывается", CarToast.LENGTH_SHORT).show()
                             isParkingOutLoading = false
                             invalidate()
                         },
@@ -116,7 +124,7 @@ class MainScreen(carContext: CarContext) : Screen(carContext), DefaultLifecycleO
         listBuilder.addItem(gridItem3)
 
         return GridTemplate.Builder()
-            .setTitle("Parking")
+            .setTitle("OpenParking")
             .setHeaderAction(Action.APP_ICON)
             .setSingleList(listBuilder.build())
             .build()

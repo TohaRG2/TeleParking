@@ -1,10 +1,10 @@
-package ru.tohaman.mytestcomposeapplication.domain.usecases.settings
+package ru.tohaman.mytestcomposeapplication.domain.usecases.preferences
 
 import kotlinx.coroutines.flow.Flow
 import ru.tohaman.mytestcomposeapplication.domain.manager.DataStoreManager
 import ru.tohaman.mytestcomposeapplication.domain.model.SendingSettings
 
-class SendingSettingsPref(private val prefManager: DataStoreManager) {
+class PreferencesManager(private val prefManager: DataStoreManager) {
 
 
     operator fun invoke(): Flow<SendingSettings> {

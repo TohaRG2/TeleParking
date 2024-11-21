@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import ru.tohaman.util.PreferencesConstants.TAG
+import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants.TAG
 
 
 @Composable

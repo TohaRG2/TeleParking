@@ -1,4 +1,4 @@
-package ru.tohaman.mytestcomposeapplication.domain.usecases.home
+package ru.tohaman.mytestcomposeapplication.domain.usecases.telegram
 
 import ru.tohaman.mytestcomposeapplication.domain.model.response.Response
 import ru.tohaman.mytestcomposeapplication.domain.repo.TelegramRepository

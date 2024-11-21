@@ -14,10 +14,9 @@ import ru.tohaman.mytestcomposeapplication.data.remote.TelegramApi
 import ru.tohaman.mytestcomposeapplication.data.repo.TelegramRepositoryImpl
 import ru.tohaman.mytestcomposeapplication.domain.manager.DataStoreManager
 import ru.tohaman.mytestcomposeapplication.domain.repo.TelegramRepository
-import ru.tohaman.mytestcomposeapplication.domain.usecases.home.HomeUseCases
-import ru.tohaman.mytestcomposeapplication.domain.usecases.home.SendTelegramMessage
-import ru.tohaman.mytestcomposeapplication.domain.usecases.settings.AppPreferences
-import ru.tohaman.mytestcomposeapplication.domain.usecases.settings.SendingSettingsPref
+import ru.tohaman.mytestcomposeapplication.domain.usecases.UseCases
+import ru.tohaman.mytestcomposeapplication.domain.usecases.telegram.SendTelegramMessage
+import ru.tohaman.mytestcomposeapplication.domain.usecases.preferences.PreferencesManager
 import ru.tohaman.mytestcomposeapplication.util.TelegramConstants.BASE_URL
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -30,15 +29,6 @@ object AppModule {
     @Provides
     fun providePreferencesManager(application: Application): DataStoreManager =
         DataStoreManagerImpl(application)
-
-
-    @Singleton
-    @Provides
-    fun provideAppPreferences(dataStoreManager: DataStoreManager) =
-        AppPreferences(
-            sendingSettingsPref = SendingSettingsPref(dataStoreManager)
-        )
-
 
     @Singleton
     @Provides
@@ -71,9 +61,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideHomeUseCases(telegramRepository: TelegramRepository): HomeUseCases {
-        return HomeUseCases(
-            sendTelegramMessages = SendTelegramMessage(repo = telegramRepository)
+    fun provideHomeUseCases(
+        telegramRepository: TelegramRepository,
+        dataStoreManager: DataStoreManager
+    ): UseCases {
+        return UseCases(
+            sendTelegramMessages = SendTelegramMessage(repo = telegramRepository),
+            preferencesManager = PreferencesManager(dataStoreManager)
         )
     }
 

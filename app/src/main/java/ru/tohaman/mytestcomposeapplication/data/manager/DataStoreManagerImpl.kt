@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.tohaman.mytestcomposeapplication.domain.manager.DataStoreManager
 import ru.tohaman.mytestcomposeapplication.domain.model.SendingSettings
-import ru.tohaman.util.PreferencesConstants
+import ru.tohaman.mytestcomposeapplication.util.PreferencesConstants
 
 
 class DataStoreManagerImpl(private val context: Context): DataStoreManager {
