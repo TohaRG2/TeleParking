@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "ru.tohaman.mytestcomposeapplication"
+    namespace = "ru.tohaman.teleparking"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.tohaman.mytestcomposeapplication"
+        applicationId = "ru.tohaman.teleparking"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
