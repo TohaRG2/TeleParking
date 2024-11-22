@@ -16,5 +16,4 @@
 -->
 <automotiveApp>
   <uses name="template" />
-  <uses name="notification"/>
 </automotiveApp>
