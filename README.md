@@ -9,6 +9,7 @@
 ![image](https://github.com/user-attachments/assets/499429b7-8cef-45f7-9931-9a93dc085abe)
 
 Для отправки сообщений нужно задать 4 настройки:
+
 ![image](https://github.com/user-attachments/assets/a38d150b-22c9-48a8-b6d6-21754be2d9d2)
 
 1. Токен бота, который будет отправлять сообщения в канал. Можно получить у бота BotFather
