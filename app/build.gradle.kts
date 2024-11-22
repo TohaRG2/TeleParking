@@ -60,8 +60,6 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    //Emoji
-    implementation ("androidx.emoji2:emoji2:1.5.0")
 
     // ViewModel
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
@@ -90,11 +88,6 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-    //Koin(Delete)
-    implementation("io.insert-koin:koin-core:4.0.0")
-
-    //Volley
-    implementation("com.android.volley:volley:1.2.1")
 }
 java {
     toolchain {

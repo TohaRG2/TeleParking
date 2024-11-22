@@ -1,7 +1,5 @@
 package ru.tohaman.teleparking.android_auto.auto_screen
 
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.CarToast
