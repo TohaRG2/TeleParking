@@ -5,7 +5,7 @@ data class HomeState(
     val chatId: String = "",
     val parkingOutMessage: String = "",
     val parkingInMessage: String = "",
-    val isParkingOutLoading: Boolean = false,
-    val isParkingInLoading: Boolean = false,
+    val isParkingOutMessageSending: Boolean = false,
+    val isParkingInMessageSending: Boolean = false,
     val error: String? = null,
 )

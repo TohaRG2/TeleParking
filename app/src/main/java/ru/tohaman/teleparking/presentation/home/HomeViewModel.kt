@@ -61,18 +61,18 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun parkingOutPressed() {
-        _state.value = _state.value.copy(isParkingOutLoading = true, error = null)
+        _state.value = _state.value.copy(isParkingOutMessageSending = true, error = null)
         CoroutineScope(Dispatchers.IO).launch {
             sendMessage(_state.value.parkingOutMessage)
-            _state.value = _state.value.copy(isParkingOutLoading = false)
+            _state.value = _state.value.copy(isParkingOutMessageSending = false)
         }
     }
 
     private fun parkingInPressed() {
-        _state.value = _state.value.copy(isParkingInLoading = true, error = null)
+        _state.value = _state.value.copy(isParkingInMessageSending = true, error = null)
         CoroutineScope(Dispatchers.IO).launch {
             sendMessage(_state.value.parkingInMessage)
-            _state.value = _state.value.copy(isParkingInLoading = false)
+            _state.value = _state.value.copy(isParkingInMessageSending = false)
         }
     }
 

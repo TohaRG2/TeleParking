@@ -86,7 +86,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (viewModel.state.value.isParkingOutLoading) {
+            if (viewModel.state.value.isParkingOutMessageSending) {
                 Box(
                     modifier = Modifier.weight(0.4f).fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -102,7 +102,7 @@ fun HomeScreen(
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            if (viewModel.state.value.isParkingInLoading) {
+            if (viewModel.state.value.isParkingInMessageSending) {
                 Box(
                     modifier = Modifier.weight(0.4f).fillMaxSize(),
                     contentAlignment = Alignment.Center

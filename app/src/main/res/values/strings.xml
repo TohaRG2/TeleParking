@@ -18,9 +18,13 @@
     <string name="parking_out_pref">parkingOut</string>
     <string name="parking_out_text">Сообщение для открытия выезда (Out)</string>
     <string name="parking_out_hint">Сообщение в чат для открытия выезда (Out)</string>
+    <string name="parking_out_toast">Дверь на выезд открыта (OUT)</string>
+    <string name="parking_out_error">Не удалось открыть дверь на выезд(OUT)</string>
 
     <string name="parking_in">Въезд в паркинг</string>
     <string name="parking_in_pref">parkingIn</string>
     <string name="parking_in_text">Сообщение для открытия въезда (In)</string>
     <string name="parking_in_hint">Сообщение в чат для открытия въезда (In)</string>
+    <string name="parking_in_toast">Дверь на въезд открыта (IN)</string>
+    <string name="parking_in_error">Не удалось открыть дверь на въезд(IN)</string>
 </resources>

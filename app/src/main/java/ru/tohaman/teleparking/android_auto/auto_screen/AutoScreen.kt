@@ -15,14 +15,14 @@ import androidx.car.app.model.Template
 import androidx.core.graphics.drawable.IconCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import ru.tohaman.teleparking.android_auto.OpenParkingIn
-import ru.tohaman.teleparking.android_auto.OpenParkingOut
-import ru.tohaman.teleparking.android_auto.OpenParkingTest
-import ru.tohaman.teleparking.android_auto.volley.RestController
-import ru.tohaman.teleparking.domain.usecases.UseCases
+import kotlinx.coroutines.launch
 import ru.tohaman.teleparking.R
+import ru.tohaman.teleparking.domain.model.response.Response
+import ru.tohaman.teleparking.domain.usecases.UseCases
 import ru.tohaman.teleparking.util.PreferencesConstants.TAG
 
 /**
@@ -30,95 +30,77 @@ import ru.tohaman.teleparking.util.PreferencesConstants.TAG
  * Кроме этого, [Screen] имеет доступ к [ScreenManager], который можно использовать для
  * открытия других экранов
  */
-class AutoScreen (
+class AutoScreen(
     carContext: CarContext,
     private val useCases: UseCases
 ) : Screen(carContext), DefaultLifecycleObserver {
 
-    private val mHandler = Handler(Looper.getMainLooper())
-    private var isParkingInLoading: Boolean = false
-    private var isParkingOutLoading: Boolean = false
-    val restController = RestController(carContext)
-    val viewModelStoreOwner = getViewModelStoreOwner()
-    var botToken: String = ""
-    var chatId: String = ""
+    var state = AutoScreenState()
 
     init {
         lifecycle.addObserver(this)
-        isParkingInLoading = false
-        isParkingOutLoading = false
         useCases.preferencesManager().onEach { settings ->
-                botToken = settings.botToken
-                chatId = settings.chatId
-                Log.d(TAG, "Loaded: $botToken $chatId")
+            state = state.copy(
+                botToken = settings.botToken,
+                chatId = settings.chatId,
+                parkingInMessage = settings.parkingInMessage,
+                parkingOutMessage = settings.parkingOutMessage,
+            )
+            Log.d(TAG, "Loaded: $state")
         }.launchIn(lifecycleScope)
     }
 
     // Создаем и возвращаем шаблон
     override fun onGetTemplate(): Template {
         Log.d(TAG, "onGetTemplate: start")
-        val listBuilder = ItemList.Builder()
+
         val parkingInIcon = CarIcon.Builder(
-            IconCompat.createWithResource(getCarContext(),
-            R.drawable.ic_parking_in
-        )).build()
+            IconCompat.createWithResource(getCarContext(), R.drawable.ic_parking_in)
+        ).build()
         val parkingOutIcon = CarIcon.Builder(
-            IconCompat.createWithResource(getCarContext(),
-            R.drawable.ic_parking_out
-        )).build()
+            IconCompat.createWithResource(getCarContext(), R.drawable.ic_parking_out)
+        ).build()
 
-        val gridItem1 = GridItem.Builder()
-            .setTitle("Parking In")
-            .setImage(CarIcon.Builder(parkingInIcon).build())
-            // Handle user interactions
-            .setOnClickListener {
-                restController.sendMessage(OpenParkingIn)
-                CarToast.makeText(carContext, "Дверь на въезд открыта (IN)", CarToast.LENGTH_SHORT).show()
-            }
-            .build()
-
-        val gridItem2 = GridItem.Builder()
-            .setTitle("Parking Out")
-            .setImage(CarIcon.Builder(parkingOutIcon).build())
-            .setOnClickListener {
-                restController.sendMessage(OpenParkingOut)
-                CarToast.makeText(carContext, "Дверь на выезд открыта (OUT)", CarToast.LENGTH_SHORT).show()
-            }
-            .build()
-
-        val gridItem3: GridItem = if (isParkingOutLoading) {
+        val gridItem1 = if (state.isParkingInMessageSending) {
             GridItem.Builder()
-                .setTitle("Parking test")
+                .setTitle(carContext.getString(R.string.parking_in))
+                .setLoading(true)
+                .build()
+        } else {
+            GridItem.Builder()
+                .setTitle(carContext.getString(R.string.parking_in))
+                .setImage(CarIcon.Builder(parkingInIcon).build())
+                .setOnClickListener(onClickIn)
+                .build()
+        }
+
+        val gridItem2 = if (state.isParkingOutMessageSending) {
+            GridItem.Builder()
+                .setTitle(carContext.getString(R.string.parking_out))
+                .setLoading(true)
+                .build()
+        } else {
+            GridItem.Builder()
+                .setTitle(carContext.getString(R.string.parking_out))
+                .setImage(CarIcon.Builder(parkingOutIcon).build())
+                .setOnClickListener(onClickOut)
+                .build()
+        }
+
+        val gridItem3: GridItem = if (state.isParkingOutMessageSending) {
+            GridItem.Builder()
+                .setTitle(carContext.getString(R.string.parking_out))
                 .setLoading(true)
                 .build()
         } else {
             GridItem.Builder()
                 .setTitle("Parking test")
                 .setImage(CarIcon.Builder(parkingOutIcon).build())
-                .setOnClickListener { //this.triggerFourthItemLoading()
-                    isParkingOutLoading = true
-                    invalidate()
-                    restController.sendMessage(
-                        message = OpenParkingTest,
-                        onSend = { response ->
-                            Log.d(TAG, "onGetTemplate: $response")
-                            CarToast.makeText(carContext, "Дверь открывается", CarToast.LENGTH_SHORT).show()
-                            isParkingOutLoading = false
-                            invalidate()
-                        },
-                        onError = { error ->
-                            Log.e(TAG, "onGetTemplate: $error")
-                            CarToast.makeText(carContext, "Не удалось открыть дверь", CarToast.LENGTH_SHORT).show()
-                            isParkingOutLoading = false
-                            invalidate()
-                        }
-                    )
-                }
+                .setOnClickListener(onClickTest)
                 .build()
         }
 
-
-
+        val listBuilder = ItemList.Builder()
         listBuilder.addItem(gridItem1)
         listBuilder.addItem(gridItem2)
         listBuilder.addItem(gridItem3)
@@ -130,25 +112,108 @@ class AutoScreen (
             .build()
     }
 
-    private fun triggerFourthItemLoading() {
-        mHandler.post(
-            Runnable {
-                isParkingInLoading = true
-                invalidate()
-                mHandler.postDelayed(
-                    Runnable {
-                        isParkingInLoading = false
-                        invalidate()
-                    },
-                    LOADING_TIME_MILLIS.toLong()
-                )
-            })
+    val onClickIn = {
+        state = state.copy(isParkingInMessageSending = true)
+        invalidate()
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedToken = state.botToken.replace(":", "%3A")
+            val response = useCases.sendTelegramMessages(
+                botToken = encodedToken,
+                chatId = state.chatId,
+                message = state.parkingInMessage
+            )
+            when (response) {
+                is Response.Success -> {
+                    Log.d(TAG, "${state.parkingInMessage} sending Success ${response.result.ok}")
+                    state = state.copy(toast = carContext.getString(R.string.parking_in_toast))
+                }
+
+                is Response.BadResponse -> {
+                    Log.d(TAG, "${state.parkingInMessage} sending HttpException ${response.error.description}")
+                    state = state.copy(toast = response.error.description)
+                }
+
+                is Response.Failure -> {
+                    Log.e(TAG, "${state.parkingInMessage} sending ERROR ${response.error}")
+                    state = state.copy(toast = response.error)
+                }
+            }
+            showToast(state.toast)
+            state = state.copy(isParkingInMessageSending = false)
+        }
+        invalidate()
     }
 
-    companion object {
-        private const val MAX_GRID_ITEMS = 100
-        private const val LOADING_TIME_MILLIS = 2000
+
+    val onClickOut = {
+        state = state.copy(isParkingOutMessageSending = true)
+        invalidate()
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedToken = state.botToken.replace(":", "%3A")
+            val response = useCases.sendTelegramMessages(
+                botToken = encodedToken,
+                chatId = state.chatId,
+                message = state.parkingOutMessage
+            )
+            when (response) {
+                is Response.Success -> {
+                    Log.d(TAG, "${state.parkingOutMessage} sending Success ${response.result.ok}")
+                    state = state.copy(toast = carContext.getString(R.string.parking_out_toast))
+                }
+
+                is Response.BadResponse -> {
+                    Log.d(TAG, "${state.parkingOutMessage} sending HttpException ${response.error.description}")
+                    state = state.copy(toast = response.error.description)
+                }
+
+                is Response.Failure -> {
+                    Log.e(TAG, "${state.parkingOutMessage} sending ERROR ${response.error}")
+                    state = state.copy(toast = response.error)
+                }
+            }
+            showToast(state.toast)
+            state = state.copy(isParkingOutMessageSending = false)
+        }
+        invalidate()
+    }
+
+    val onClickTest = {
+        state = state.copy(isParkingOutMessageSending = true)
+        invalidate()
+        CoroutineScope(Dispatchers.IO).launch {
+            val encodedToken = state.botToken.replace(":", "%3A")
+            val response = useCases.sendTelegramMessages(
+                botToken = encodedToken,
+                chatId = state.chatId,
+                message = state.parkingOutMessage
+            )
+            when (response) {
+                is Response.Success -> {
+                    Log.d(TAG, "${state.parkingOutMessage} sending Success ${response.result.ok}")
+                    state = state.copy(toast = carContext.getString(R.string.parking_out_toast))
+                }
+
+                is Response.BadResponse -> {
+                    Log.d(TAG, "${state.parkingOutMessage} sending HttpException ${response.error.description}")
+                    state = state.copy(toast = response.error.description)
+                }
+
+                is Response.Failure -> {
+                    Log.e(TAG, "${state.parkingOutMessage} sending ERROR ${response.error}")
+                    state = state.copy(toast = response.error)
+                }
+            }
+            showToast(state.toast)
+            state = state.copy(isParkingOutMessageSending = false)
+        }
+        invalidate()
+    }
+
+    fun showToast(message: String) {
+        CarToast.makeText(carContext, message, CarToast.LENGTH_LONG).show()
     }
 
 }
 
+//const val OpenParkingOut = "open_parking_out"
+//const val OpenParkingIn = "open_parking_in"
