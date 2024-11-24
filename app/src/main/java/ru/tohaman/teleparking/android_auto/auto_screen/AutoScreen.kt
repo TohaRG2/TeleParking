@@ -101,7 +101,7 @@ class AutoScreen(
         val listBuilder = ItemList.Builder()
         listBuilder.addItem(gridItem1)
         listBuilder.addItem(gridItem2)
-        listBuilder.addItem(gridItem3)
+//        listBuilder.addItem(gridItem3)
 
         return GridTemplate.Builder()
             .setTitle("OpenParking")

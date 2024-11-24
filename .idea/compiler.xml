@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
+      <module name="MyTestComposeApplication.app" target="17" />
       <module name="MyTestComposeApplication.app.auto" target="21" />
       <module name="MyTestComposeApplication.auto" target="21" />
     </bytecodeTargetLevel>

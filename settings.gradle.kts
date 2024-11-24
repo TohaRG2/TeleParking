@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyTestComposeApplication"
+rootProject.name = "TeleParkingApplication"
 include(":app")

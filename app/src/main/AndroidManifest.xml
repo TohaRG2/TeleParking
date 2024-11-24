@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyTestComposeApplication"
+        android:theme="@style/Theme.TeleParkingApplication"
         tools:targetApi="31">
         <meta-data android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc"
@@ -32,7 +32,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MyTestComposeApplication">
+            android:theme="@style/Theme.TeleParkingApplication">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
